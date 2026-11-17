@@ -1,0 +1,81 @@
+# L'environnement du lab RHPilot : la forge, son runner, SonarQube, et l'application en production.
+name: rhpilot-lab
+
+services:
+  db:
+    image: postgres:18.7-alpine
+    environment:
+      POSTGRES_USER: rhpilot
+      POSTGRES_PASSWORD: rhpilot
+      POSTGRES_DB: rhpilot
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d:ro
+      - db-data:/var/lib/postgresql
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "rhpilot"]
+      interval: 5s
+      retries: 20
+
+  app:
+    build:
+      context: ../app
+      dockerfile: ../infra/app.Dockerfile
+    environment:
+      DATABASE_URL: postgres://rhpilot:rhpilot@db:5432/rhpilot
+      PORT: "3000"
+    ports:
+      - "8300:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  gitea:
+    image: gitea/gitea:1.27.3
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__database__DB_TYPE: sqlite3
+      GITEA__security__INSTALL_LOCK: "true"
+      GITEA__server__ROOT_URL: http://localhost:3300/
+      GITEA__server__DISABLE_SSH: "true"
+      GITEA__service__DISABLE_REGISTRATION: "true"
+      GITEA__actions__ENABLED: "true"
+      GITEA__repository__DEFAULT_BRANCH: main
+    volumes:
+      - gitea-data:/data
+    ports:
+      - "3300:3000"
+
+  runner:
+    image: gitea/act_runner:0.6.1
+    environment:
+      GITEA_INSTANCE_URL: http://gitea:3000
+      GITEA_RUNNER_REGISTRATION_TOKEN: ${RUNNER_TOKEN:-}
+      GITEA_RUNNER_NAME: runner-local
+      CONFIG_FILE: /config.yaml
+    volumes:
+      - ./runner-config.yaml:/config.yaml:ro
+      - runner-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - gitea
+    profiles: ["runner"]
+
+  sonarqube:
+    image: sonarqube:26.11.0.134175-community
+    volumes:
+      - sonarqube-data:/opt/sonarqube/data
+    ports:
+      - "9300:9000"
+
+networks:
+  default:
+    name: rhpilot-lab
+
+volumes:
+  db-data:
+  gitea-data:
+  runner-data:
+  sonarqube-data:

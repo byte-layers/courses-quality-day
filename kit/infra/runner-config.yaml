@@ -1,0 +1,12 @@
+# Réglages du runner Gitea Actions du lab.
+log:
+  level: info
+runner:
+  capacity: 1
+  labels:
+    - "ubuntu-latest:docker://node:24-bookworm-slim"
+cache:
+  enabled: false
+container:
+  # Les conteneurs des jobs rejoignent le réseau du compose : ils joignent gitea, sonarqube et db par leur nom.
+  network: rhpilot-lab

@@ -1,0 +1,27 @@
+name: CI
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.7-alpine
+        env:
+          POSTGRES_USER: rhpilot
+          POSTGRES_PASSWORD: rhpilot
+          POSTGRES_DB: rhpilot_test
+    env:
+      DATABASE_URL: postgres://rhpilot:rhpilot@postgres:5432/rhpilot_test
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm audit --omit=dev --audit-level=high
+      - name: Analyse SonarQube (develop seulement)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+        run: npx -y @sonar/scan@5.1.0 -Dsonar.host.url=${{ vars.SONAR_HOST_URL }} -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.qualitygate.wait=true

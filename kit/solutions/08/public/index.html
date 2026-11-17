@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RHPilot · Candidatures</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header><h1>RHPilot</h1><p>Le module candidatures</p></header>
+  <main>
+    <section id="apply">
+      <h2>Postuler</h2>
+      <form id="apply-form">
+        <label>Offre <select name="offer_id" id="offer"></select></label>
+        <label>Prénom <input name="first_name" required></label>
+        <label>Nom <input name="last_name" required></label>
+        <label>Email <input name="email" type="email" required></label>
+        <label>Téléphone <input name="phone"></label>
+        <label>Message <textarea name="cover_letter"></textarea></label>
+        <button type="submit">Envoyer ma candidature</button>
+      </form>
+      <p id="apply-result" role="status"></p>
+    </section>
+    <section id="recruiter">
+      <h2>Espace recruteur</h2>
+      <form id="search-form">
+        <label>Jeton recruteur <input name="token" id="token" type="password"></label>
+        <label>Nom <input name="q" id="q"></label>
+        <button type="submit">Rechercher</button>
+        <a id="export" href="#">Exporter en CSV</a>
+      </form>
+      <table>
+        <thead><tr><th>#</th><th>Candidat</th><th>Email</th><th>Offre</th><th>Statut</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </section>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
