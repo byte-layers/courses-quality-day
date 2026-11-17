@@ -21,7 +21,7 @@ Relisez l'issue de bob : « Un candidat nous a demandé de supprimer ses donnée
 cd ~/byte-layers/quality-day/rhpilot && git switch develop && git pull && git switch -c feature/erasure && mkdir -p specs
 ```
 
-**Avec un agent**, demandez-lui : *« Utilise la skill issue-to-spec sur cette issue »*, et collez le texte de l'issue. S'il pose des questions, répondez comme le ferait bob : seuls les recruteurs peuvent effacer ; on efface par email, toutes les candidatures de la personne ; on ne garde pas l'email dans les journaux. **Sans agent**, écrivez-la vous-même en suivant la procédure de [la skill](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/07-prose/.agents/skills/issue-to-spec/SKILL.md).
+**Avec un agent**, demandez-lui : *« Utilise la skill issue-to-spec sur cette issue »*, et collez le texte de l'issue. S'il pose des questions, répondez comme le ferait bob : seuls les recruteurs peuvent effacer ; on efface par email, toutes les candidatures de la personne ; on ne garde pas l'email dans les journaux. **Sans agent**, écrivez-la vous-même en suivant la procédure de [la skill](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v3/kit/steps/07-prose/.agents/skills/issue-to-spec/SKILL.md).
 
 **Critères** pour `specs/erasure.md` :
 
@@ -89,7 +89,7 @@ echo "Les tests de l'effacement sont en place."
 
 ## 08.3 - Le code, avec ou sans agent
 
-**Avec un agent**, ajoutez le label `agent` à l'issue, puis demandez : *« Implémente specs/erasure.md. Les tests de test/erasure.test.js doivent passer sans être modifiés. »* S'il essaie de modifier un test, le hook de l'étape 07 le bloque (avec OpenCode ou Claude Code), et le message lui dit de corriger le code ; avec un autre agent, c'est votre relecture qui l'arrête. Relisez son diff.
+**Avec un agent**, ajoutez le label `agent` à l'issue, puis demandez : *« Implémente specs/erasure.md. Les tests de test/erasure.test.js doivent passer sans être modifiés. »* S'il essaie de modifier un test, le hook de l'étape 07 le bloque (avec OpenCode, Kilo Code ou Claude Code), et le message lui dit de corriger le code ; avec un autre agent, c'est votre relecture qui l'arrête. Relisez son diff.
 
 **Sans agent**, copiez la route fournie. Elle remplace tout le fichier, et suppose le code remanié fourni à l'étape 06 (`src/db.js`, `src/validation.js`) : si vous avez pris le chemin A en 06, ajoutez plutôt à la main la route `router.delete` de ce fichier dans le vôtre.
 
@@ -97,7 +97,7 @@ echo "Les tests de l'effacement sont en place."
 cd ~/byte-layers/quality-day/rhpilot && cp ~/byte-layers/quality-day/course/kit/steps/08-erasure/without-agent/src/routes/applications.js src/routes/
 ```
 
-Elle ajoute une route `router.delete('/', …)` à [`src/routes/applications.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/08-erasure/without-agent/src/routes/applications.js). **À vous** : remplacez son `// TODO` par la réponse 404 de l'exigence E2.
+Elle ajoute une route `router.delete('/', …)` à [`src/routes/applications.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v3/kit/steps/08-erasure/without-agent/src/routes/applications.js). **À vous** : remplacez son `// TODO` par la réponse 404 de l'exigence E2.
 
 ```hint
 `result.rowCount` donne le nombre de lignes supprimées. Les autres routes répondent une erreur avec `return res.status(…).json({ error: '…' });`.
@@ -134,9 +134,9 @@ cd ~/byte-layers/quality-day/rhpilot && npm install -D -E @playwright/test@1.65.
 
 | Fichier | Ce qui a changé |
 |---|---|
-| [`playwright.config.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/08-erasure/playwright.config.js) | écrit en module ES ; `webServer` remplit la base et démarre l'application avant les tests |
-| [`e2e/apply.spec.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/08-erasure/e2e/apply.spec.js) | deux parcours : un candidat postule et un recruteur le retrouve ; un nom qui contient du HTML reste du texte (le correctif XSS de l'étape 06) ; les éléments sont trouvés par leur libellé, comme les voit un utilisateur |
-| [`.gitea/workflows/ci.yml`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/08-erasure/.gitea/workflows/ci.yml) | un job `e2e`, lancé après `checks` (`needs: checks`), dans l'image officielle de Playwright, qui contient les navigateurs, avec sa propre base `rhpilot_e2e` |
+| [`playwright.config.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v3/kit/steps/08-erasure/playwright.config.js) | écrit en module ES ; `webServer` remplit la base et démarre l'application avant les tests |
+| [`e2e/apply.spec.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v3/kit/steps/08-erasure/e2e/apply.spec.js) | deux parcours : un candidat postule et un recruteur le retrouve ; un nom qui contient du HTML reste du texte (le correctif XSS de l'étape 06) ; les éléments sont trouvés par leur libellé, comme les voit un utilisateur |
+| [`.gitea/workflows/ci.yml`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v3/kit/steps/08-erasure/.gitea/workflows/ci.yml) | un job `e2e`, lancé après `checks` (`needs: checks`), dans l'image officielle de Playwright, qui contient les navigateurs, avec sa propre base `rhpilot_e2e` |
 
 > 📖 [Playwright, le serveur web des tests (en anglais)](https://playwright.dev/docs/test-webserver) · [Playwright dans Docker (en anglais)](https://playwright.dev/docs/docker)
 

@@ -23,7 +23,7 @@ Le module concerné est le module **candidatures** : un candidat postule à une 
 Le kit contient l'application de départ, l'environnement Docker et les fichiers fournis à certaines étapes. Clonez-le :
 
 ```exec
-git clone --depth 1 --branch rhpilot-quality-day/v2 https://github.com/byte-layers/courses-quality-day.git ~/byte-layers/quality-day/course
+git clone --depth 1 --branch rhpilot-quality-day/v3 https://github.com/byte-layers/courses-quality-day.git ~/byte-layers/quality-day/course
 ```
 
 > 🔍 **Comprendre la commande**
@@ -31,7 +31,7 @@ git clone --depth 1 --branch rhpilot-quality-day/v2 https://github.com/byte-laye
 > | Morceau | Rôle |
 > |---|---|
 > | `--depth 1` | ne télécharge que la dernière version, sans l'historique |
-> | `--branch rhpilot-quality-day/v2` | prend la version du kit qui correspond à ce lab |
+> | `--branch rhpilot-quality-day/v3` | prend la version du kit qui correspond à ce lab |
 > | `~/byte-layers/quality-day/course` | le dossier où ranger le kit |
 
 ```verify

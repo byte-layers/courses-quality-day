@@ -48,7 +48,7 @@ cd ~/byte-layers/quality-day/rhpilot && npm install -D -E eslint@10.15.0 @eslint
 > | `@eslint/js`, `globals` | les règles de base d'ESLint, et la liste des variables globales de Node.js et du navigateur |
 > | `cp …/eslint.config.js .` | copie la configuration fournie à la racine du dépôt |
 
-Ouvrez [`eslint.config.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/05-guardrails/eslint.config.js) : il active les règles recommandées d'ESLint et de sonarjs, puis rétrograde en **avertissements** trois règles que le code actuel enfreint : `todo-tag`, `cognitive-complexity` et `no-default-utility-imports`. On ne peut pas tout corriger aujourd'hui, mais on peut interdire d'**ajouter** de la dette. C'est le principe du **cliquet**, vu dans le lab [Mesurer la dette avec Semgrep, ESLint et jscpd](https://byte-layers.com/fr/labs/measure-debt) : on fixe le nombre d'avertissements actuel comme plafond, et il ne pourra que baisser.
+Ouvrez [`eslint.config.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v3/kit/steps/05-guardrails/eslint.config.js) : il active les règles recommandées d'ESLint et de sonarjs, puis rétrograde en **avertissements** trois règles que le code actuel enfreint : `todo-tag`, `cognitive-complexity` et `no-default-utility-imports`. On ne peut pas tout corriger aujourd'hui, mais on peut interdire d'**ajouter** de la dette. C'est le principe du **cliquet**, vu dans le lab [Mesurer la dette avec Semgrep, ESLint et jscpd](https://byte-layers.com/fr/labs/measure-debt) : on fixe le nombre d'avertissements actuel comme plafond, et il ne pourra que baisser.
 
 Lancez ESLint pour compter les avertissements :
 
@@ -124,7 +124,7 @@ Avant de remanier un code sans tests, on écrit des **tests de caractérisation*
 cd ~/byte-layers/quality-day/rhpilot && cp ~/byte-layers/quality-day/course/kit/steps/05-guardrails/test/api.test.js test/
 ```
 
-Ouvrez [`test/api.test.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/05-guardrails/test/api.test.js) et lisez les titres : la liste des offres, le dépôt d'une candidature, les erreurs de validation, le refus sans jeton, la fusion des doublons par email, la recherche, les filtres, l'export CSV, la mise à jour. Deux détails comptent pour la suite :
+Ouvrez [`test/api.test.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v3/kit/steps/05-guardrails/test/api.test.js) et lisez les titres : la liste des offres, le dépôt d'une candidature, les erreurs de validation, le refus sans jeton, la fusion des doublons par email, la recherche, les filtres, l'export CSV, la mise à jour. Deux détails comptent pour la suite :
 
 - le test récupère le jeton recruteur en important `RECRUITER_TOKEN` depuis `src/auth.js` : il ne recopie pas le secret, et il marchera encore quand le jeton sera lu dans l'environnement ;
 - il remplit la base avec `db/seed.js` : c'est pourquoi la base de test est séparée de la base de production.
@@ -181,7 +181,7 @@ Il reste à faire tourner tout cela dans le pipeline, pour qu'aucune pull reques
 cd ~/byte-layers/quality-day/rhpilot && cp ~/byte-layers/quality-day/course/kit/steps/05-guardrails/.gitea/workflows/ci.yml .gitea/workflows/ci.yml && cp ~/byte-layers/quality-day/course/kit/steps/05-guardrails/sonar-project.properties .
 ```
 
-Ouvrez [`.gitea/workflows/ci.yml`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/05-guardrails/.gitea/workflows/ci.yml) :
+Ouvrez [`.gitea/workflows/ci.yml`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v3/kit/steps/05-guardrails/.gitea/workflows/ci.yml) :
 
 | Partie | Rôle |
 |---|---|

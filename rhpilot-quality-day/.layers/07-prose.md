@@ -89,10 +89,10 @@ cd ~/byte-layers/quality-day/rhpilot && cp -R ~/byte-layers/quality-day/course/k
 
 | Fichier | Contenu |
 |---|---|
-| [`.agents/skills/issue-to-spec/SKILL.md`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/07-prose/.agents/skills/issue-to-spec/SKILL.md) | la skill : lire l'issue, poser les questions manquantes, écrire `specs/<sujet>.md` avec des exigences numérotées, une interface et un hors périmètre |
-| [`opencode.json`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/07-prose/opencode.json) | les permissions au format d'OpenCode : `.env` illisible, `package.json` modifiable seulement avec votre accord (valeur `ask`), `npm test` et `npm run lint` libres, toute autre commande sur accord, `git push` interdit |
+| [`.agents/skills/issue-to-spec/SKILL.md`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v3/kit/steps/07-prose/.agents/skills/issue-to-spec/SKILL.md) | la skill : lire l'issue, poser les questions manquantes, écrire `specs/<sujet>.md` avec des exigences numérotées, une interface et un hors périmètre |
+| [`opencode.json`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v3/kit/steps/07-prose/opencode.json) | les permissions au format d'OpenCode : `.env` illisible, `package.json` modifiable seulement avec votre accord (valeur `ask`), `npm test` et `npm run lint` libres, toute autre commande sur accord, `git push` interdit |
 
-`.agents/skills/` est l'emplacement de skills que lisent plusieurs agents, dont Kilo Code et OpenCode. Les permissions, elles, n'ont pas de format commun : Kilo Code les lit dans `kilo.jsonc`, sous la même clé `permission`, et Claude Code dans `.claude/settings.json`. Le bit [Où chaque harness range sa configuration](https://byte-layers.com/fr/bits/agent-config-crosswalk) donne le fichier de chaque outil.
+`.agents/skills/` est l'emplacement de skills que lisent plusieurs agents, dont Kilo Code et OpenCode. Les permissions, elles, n'ont pas de format commun. Kilo Code, dérivé d'OpenCode, lit aussi le `opencode.json` du projet (et son propre `kilo.jsonc`, sous la même clé `permission`) : ces permissions valent donc pour lui. Claude Code lit les siennes dans `.claude/settings.json`. Le bit [Où chaque harness range sa configuration](https://byte-layers.com/fr/bits/agent-config-crosswalk) donne le fichier de chaque outil.
 
 ```verify
 D=~/byte-layers/quality-day/rhpilot
@@ -105,13 +105,13 @@ echo "La skill et les permissions sont en place."
 
 Une permission porte sur un outil, parfois restreint à des chemins : `.env` illisible, `package.json` sur accord. Mais un test se modifie par plusieurs outils (édition, écriture, réécriture complète), et chacun demanderait sa règle. Pour refuser **certains** fichiers, quel que soit l'outil d'écriture, on écrit un **hook** : du code appelé avant chaque action de l'agent. Celui-ci refuse toute modification des tests et de la configuration des outils. C'est la règle classée `hook` en 07.1.
 
-Le hook existe en deux versions, car chaque outil a son format : un plugin JavaScript pour OpenCode, et un script shell pour Claude Code. Le kit ne fournit ni hook ni permissions pour Kilo Code ou pour un autre agent : avec eux, seule votre relecture du diff protège les tests, et c'est l'occasion de chercher dans leur documentation l'équivalent. Copiez-les :
+Le hook existe en deux versions, car chaque outil a son format : un plugin JavaScript pour OpenCode et Kilo Code, et un script shell pour Claude Code. Kilo Code accepte le plugin d'OpenCode, mais le cherche dans son propre dossier, `.kilo/plugins/` : vous l'y copierez une fois complété. Pour un autre agent, cherchez l'équivalent dans sa documentation ; sans hook, seule votre relecture du diff protège les tests. Copiez les deux versions :
 
 ```exec
 cd ~/byte-layers/quality-day/rhpilot && cp -R ~/byte-layers/quality-day/course/kit/steps/07-prose/.opencode ~/byte-layers/quality-day/course/kit/steps/07-prose/.claude .
 ```
 
-Le plugin OpenCode, [`.opencode/plugins/protect-guardrails.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/07-prose/.opencode/plugins/protect-guardrails.js), se lit ainsi :
+Le plugin OpenCode, [`.opencode/plugins/protect-guardrails.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v3/kit/steps/07-prose/.opencode/plugins/protect-guardrails.js), se lit ainsi :
 
 | Ligne | Rôle |
 |---|---|
@@ -168,7 +168,15 @@ refusé : Bloqué par le hook : test/api.test.js est un garde-fou. Corrigez le c
 accepté : src/db.js
 ```
 
-La version Claude Code fait la même chose dans [`.claude/hooks/protect-guardrails.sh`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/07-prose/.claude/hooks/protect-guardrails.sh), déclarée dans `.claude/settings.json` : Claude Code lui envoie l'appel en JSON, et le **code de sortie 2** bloque l'appel (une réponse JSON avec `permissionDecision` à `deny` le peut aussi). Le lab [Hooks : demander ou garantir](https://byte-layers.com/fr/labs/agent-hooks) détaille les deux formats.
+**Avec Kilo Code**, copiez le plugin complété dans le dossier où Kilo Code le cherche :
+
+```exec
+cd ~/byte-layers/quality-day/rhpilot && mkdir -p .kilo/plugins && cp .opencode/plugins/protect-guardrails.js .kilo/plugins/
+```
+
+Le même fichier sert aux deux outils ; si vous le modifiez, recopiez-le. Essayé avec Kilo Code 7.8 : une demande de modification de `test/utils.test.js` est refusée avec le message du hook, et la modification d'un fichier de `src/` passe.
+
+La version Claude Code fait la même chose dans [`.claude/hooks/protect-guardrails.sh`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v3/kit/steps/07-prose/.claude/hooks/protect-guardrails.sh), déclarée dans `.claude/settings.json` : Claude Code lui envoie l'appel en JSON, et le **code de sortie 2** bloque l'appel (une réponse JSON avec `permissionDecision` à `deny` le peut aussi). Le lab [Hooks : demander ou garantir](https://byte-layers.com/fr/labs/agent-hooks) détaille les deux formats.
 
 ```verify
 D=~/byte-layers/quality-day/rhpilot
