@@ -28,7 +28,7 @@ cd ~/byte-layers/quality-day/rhpilot && git switch develop && git pull && git sw
 cd ~/byte-layers/quality-day/rhpilot && cp ~/byte-layers/quality-day/course/kit/steps/06-refactor/AGENTS.md .
 ```
 
-Ouvrez [`AGENTS.md`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v1/kit/steps/06-refactor/AGENTS.md) : il décrit le projet et ses commandes, puis aligne **douze règles numérotées**. C'est ce qu'on écrit d'habitude : un règlement, que l'agent est censé respecter. Gardez-le en tête : à l'étape 07, vous le réduirez.
+Ouvrez [`AGENTS.md`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/06-refactor/AGENTS.md) : il décrit le projet et ses commandes, puis aligne **douze règles numérotées**. C'est ce qu'on écrit d'habitude : un règlement, que l'agent est censé respecter. Gardez-le en tête : à l'étape 07, vous le réduirez.
 
 ```verify
 [ -f ~/byte-layers/quality-day/rhpilot/AGENTS.md ] || { echo "AGENTS.md manque à la racine du dépôt : relancez la commande cp de la section 06.1."; exit 1; }
@@ -41,7 +41,21 @@ Le remaniement touche une dizaine de fichiers. Deux chemins mènent au même ré
 
 ### Chemin A : avec un agent
 
-Ouvrez le dépôt dans VS Code, puis votre agent (Kilo Code, ou un autre qui lit `AGENTS.md`). Donnez-lui la consigne fournie dans [`prompt.md`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v1/kit/steps/06-refactor/prompt.md) : copiez son contenu dans la conversation.
+Ouvrez le dépôt dans VS Code, puis votre agent (Kilo Code, ou un autre qui lit `AGENTS.md`).
+
+On ne lance pas un agent sur dix fichiers sans savoir ce qu'il compte faire. On travaille avec lui comme en **binôme** : il analyse et propose un **plan**, vous le relisez et le validez, puis il l'exécute. C'est la même idée qu'à l'étape 08 : décider avant de coder.
+
+Dans Kilo Code, choisissez le mode **Plan** dans le sélecteur de mode (dans le terminal : `kilo --agent plan`). Dans ce mode, l'agent ne peut modifier aucun fichier du projet, seulement écrire son plan, dans `.kilo/plans/`. Donnez-lui cette demande :
+
+```text
+Lis AGENTS.md et les constats de l'état des lieux dans ~/byte-layers/quality-day/constats.txt.
+Propose un plan de remaniement du module candidatures, sans modifier aucun fichier : les modules à créer,
+l'ordre des changements, les risques, et comment les tests de test/ prouveront que le comportement n'a pas changé.
+```
+
+Relisez le plan comme un relecteur : couvre-t-il les quatre constats de l'étape 02, les mots de passe et la complexité signalés par SonarQube ? Propose-t-il de modifier des tests ? Comparez-le ensuite à [`prompt.md`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/06-refactor/prompt.md) : c'est le plan que l'équipe de RHPilot a validé après ce même exercice, écrit comme une consigne numérotée. Le plan de votre agent sera différent ; ce qui compte, c'est que vous sachiez dire ce qui lui manque.
+
+Passez ensuite en mode **Code**, et donnez-lui la consigne validée : le contenu de `prompt.md`, ou le plan de l'agent, corrigé par vous. Si l'agent a rangé son plan dans le dépôt, sous `.kilo/plans/`, supprimez ce dossier avant de commiter : le plan a servi à décider, il n'a pas sa place dans le code.
 
 ```exec
 cat ~/byte-layers/quality-day/course/kit/steps/06-refactor/prompt.md
@@ -63,7 +77,7 @@ Copiez les fichiers remaniés fournis : ils remplacent ceux de `src/`, `public/`
 cd ~/byte-layers/quality-day/rhpilot && cp -R ~/byte-layers/quality-day/course/kit/steps/06-refactor/without-agent/. .
 ```
 
-Prenez quelques minutes pour lire [`src/routes/applications.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v1/kit/steps/06-refactor/without-agent/src/routes/applications.js) : la fonction de recherche de 60 lignes est devenue `buildFilters`, qui construit une clause `WHERE` avec des paramètres `$1`, `$2`, et `keepFirstByEmail`, qui dédoublonne en un seul passage.
+Prenez quelques minutes pour lire [`src/routes/applications.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/06-refactor/without-agent/src/routes/applications.js) : la fonction de recherche de 60 lignes est devenue `buildFilters`, qui construit une clause `WHERE` avec des paramètres `$1`, `$2`, et `keepFirstByEmail`, qui dédoublonne en un seul passage.
 
 **À vous** : `src/logger.js` contient un `// TODO`. La fonction `mask` remplace déjà les emails ; complétez-la pour qu'elle remplace aussi les numéros de téléphone par `[téléphone]`, avec l'expression régulière `PHONE` définie en haut du fichier.
 
@@ -147,7 +161,7 @@ Publiez, comme à l'étape 05 :
 cd ~/byte-layers/quality-day/rhpilot && git add -A && git commit -m "Remanie le module candidatures : base, journal, configuration, filtres" && git push -u origin feature/refactor
 ```
 
-Ouvrez la pull request vers `develop`, passez l'issue en `status/review`, faites relire et approuver par bob, puis fusionnez. Une relecture utile tient en trois questions : les tests ont-ils changé ? la configuration des outils a-t-elle changé, et pourquoi ? le code fait-il ce que dit l'issue, et rien d'autre ?
+Ouvrez la pull request vers `develop` (vérifiez la base : Gitea propose `main`), passez l'issue en `status/review`, faites relire et approuver par bob, puis fusionnez. Une relecture utile tient en trois questions : les tests ont-ils changé ? la configuration des outils a-t-elle changé, et pourquoi ? le code fait-il ce que dit l'issue, et rien d'autre ?
 
 Après la fusion, le pipeline de `develop` lance SonarQube, cette fois sans filet. La quality gate **RHPilot audit** passe au vert : sécurité A, fiabilité A, couverture au-dessus de 90 %, duplication à zéro. La dette mesurée est tombée à une dizaine de minutes. Passez l'issue en `status/done` et fermez-la.
 

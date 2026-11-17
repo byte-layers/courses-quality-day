@@ -89,8 +89,8 @@ cd ~/byte-layers/quality-day/rhpilot && cp -R ~/byte-layers/quality-day/course/k
 
 | Fichier | Contenu |
 |---|---|
-| [`.agents/skills/issue-to-spec/SKILL.md`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v1/kit/steps/07-prose/.agents/skills/issue-to-spec/SKILL.md) | la skill : lire l'issue, poser les questions manquantes, écrire `specs/<sujet>.md` avec des exigences numérotées, une interface et un hors périmètre |
-| [`opencode.json`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v1/kit/steps/07-prose/opencode.json) | les permissions au format d'OpenCode : `.env` illisible, `package.json` modifiable seulement avec votre accord (valeur `ask`), `npm test` et `npm run lint` libres, toute autre commande sur accord, `git push` interdit |
+| [`.agents/skills/issue-to-spec/SKILL.md`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/07-prose/.agents/skills/issue-to-spec/SKILL.md) | la skill : lire l'issue, poser les questions manquantes, écrire `specs/<sujet>.md` avec des exigences numérotées, une interface et un hors périmètre |
+| [`opencode.json`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/07-prose/opencode.json) | les permissions au format d'OpenCode : `.env` illisible, `package.json` modifiable seulement avec votre accord (valeur `ask`), `npm test` et `npm run lint` libres, toute autre commande sur accord, `git push` interdit |
 
 `.agents/skills/` est l'emplacement de skills que lisent plusieurs agents, dont Kilo Code et OpenCode. Les permissions, elles, n'ont pas de format commun : Kilo Code les lit dans `kilo.jsonc`, sous la même clé `permission`, et Claude Code dans `.claude/settings.json`. Le bit [Où chaque harness range sa configuration](https://byte-layers.com/fr/bits/agent-config-crosswalk) donne le fichier de chaque outil.
 
@@ -111,7 +111,7 @@ Le hook existe en deux versions, car chaque outil a son format : un plugin JavaS
 cd ~/byte-layers/quality-day/rhpilot && cp -R ~/byte-layers/quality-day/course/kit/steps/07-prose/.opencode ~/byte-layers/quality-day/course/kit/steps/07-prose/.claude .
 ```
 
-Le plugin OpenCode, [`.opencode/plugins/protect-guardrails.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v1/kit/steps/07-prose/.opencode/plugins/protect-guardrails.js), se lit ainsi :
+Le plugin OpenCode, [`.opencode/plugins/protect-guardrails.js`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/07-prose/.opencode/plugins/protect-guardrails.js), se lit ainsi :
 
 | Ligne | Rôle |
 |---|---|
@@ -168,7 +168,7 @@ refusé : Bloqué par le hook : test/api.test.js est un garde-fou. Corrigez le c
 accepté : src/db.js
 ```
 
-La version Claude Code fait la même chose dans [`.claude/hooks/protect-guardrails.sh`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v1/kit/steps/07-prose/.claude/hooks/protect-guardrails.sh), déclarée dans `.claude/settings.json` : Claude Code lui envoie l'appel en JSON, et le **code de sortie 2** bloque l'appel (une réponse JSON avec `permissionDecision` à `deny` le peut aussi). Le lab [Hooks : demander ou garantir](https://byte-layers.com/fr/labs/agent-hooks) détaille les deux formats.
+La version Claude Code fait la même chose dans [`.claude/hooks/protect-guardrails.sh`](https://github.com/byte-layers/courses-quality-day/blob/rhpilot-quality-day/v2/kit/steps/07-prose/.claude/hooks/protect-guardrails.sh), déclarée dans `.claude/settings.json` : Claude Code lui envoie l'appel en JSON, et le **code de sortie 2** bloque l'appel (une réponse JSON avec `permissionDecision` à `deny` le peut aussi). Le lab [Hooks : demander ou garantir](https://byte-layers.com/fr/labs/agent-hooks) détaille les deux formats.
 
 ```verify
 D=~/byte-layers/quality-day/rhpilot
@@ -196,7 +196,7 @@ echo "Le hook refuse les modifications des garde-fous, et laisse passer le reste
 cd ~/byte-layers/quality-day/rhpilot && git add -A && git commit -m "Configure les agents : AGENTS.md réduit, skill, permissions, hook" && git push -u origin feature/agent-config
 ```
 
-Ouvrez la pull request vers `develop`, faites-la approuver par bob, puis fusionnez.
+Ouvrez la pull request vers `develop` (vérifiez la base : Gitea propose `main`), faites-la approuver par bob, puis fusionnez.
 
 ```verify
 E=~/byte-layers/quality-day/course/kit/infra/.env
